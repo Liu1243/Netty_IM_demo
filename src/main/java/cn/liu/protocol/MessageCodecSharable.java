@@ -14,6 +14,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
 
+/**
+ * @author 1
+ */
 @Slf4j
 @ChannelHandler.Sharable
 /**
@@ -37,7 +40,7 @@ public class MessageCodecSharable extends MessageToMessageCodec<ByteBuf, Message
         out.writeByte(0xff);
 
         // 6. 获取内容的字节数组
-        byte[] bytes = Serializer.Algorithm.Java.serialize(msg);
+        byte[] bytes = Config.getSerializerAlgorithm().serialize(msg);
 
         // 7. 长度
         out.writeInt(bytes.length);
@@ -59,10 +62,10 @@ public class MessageCodecSharable extends MessageToMessageCodec<ByteBuf, Message
         in.readBytes(bytes, 0, length);
 
         Serializer.Algorithm algorithm = Serializer.Algorithm.values()[serializerAlgorithm];
-        Class<?> messageClass = Message.getMessageClass(messageType);
+        Class<? extends Message> messageClass = Message.getMessageClass(messageType);
         Object message = algorithm.deserialize(messageClass, bytes);
 
-//        log.debug("{}, {}, {}, {}, {}, {}", magicNum, version, serializerType, messageType, sequenceId, length);
+//        log.debug("{}, {}, {}, {}, {}", magicNum, version, messageType, sequenceId, length);
 //        log.debug("{}", message);
         out.add(message);
     }

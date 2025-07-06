@@ -1,5 +1,6 @@
 package cn.liu.message;
 
+import cn.liu.message.*;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -9,7 +10,12 @@ import java.util.Map;
 @Data
 public abstract class Message implements Serializable {
 
-    public static Class<?> getMessageClass(int messageType) {
+    /**
+     * 根据消息类型字节，获得对应的消息 class
+     * @param messageType 消息类型字节
+     * @return 消息 class
+     */
+    public static Class<? extends Message> getMessageClass(int messageType) {
         return messageClasses.get(messageType);
     }
 
@@ -35,8 +41,16 @@ public abstract class Message implements Serializable {
     public static final int GroupMembersResponseMessage = 13;
     public static final int PingMessage = 14;
     public static final int PongMessage = 15;
+    /**
+     * 请求类型 byte 值
+     */
+    public static final int RPC_MESSAGE_TYPE_REQUEST = 101;
+    /**
+     * 响应类型 byte 值
+     */
+    public static final int  RPC_MESSAGE_TYPE_RESPONSE = 102;
 
-    private static final Map<Integer, Class<?>> messageClasses = new HashMap<>();
+    private static final Map<Integer, Class<? extends Message>> messageClasses = new HashMap<>();
 
     static {
         messageClasses.put(LoginRequestMessage, LoginRequestMessage.class);
@@ -53,5 +67,8 @@ public abstract class Message implements Serializable {
         messageClasses.put(GroupChatResponseMessage, GroupChatResponseMessage.class);
         messageClasses.put(GroupMembersRequestMessage, GroupMembersRequestMessage.class);
         messageClasses.put(GroupMembersResponseMessage, GroupMembersResponseMessage.class);
+        messageClasses.put(RPC_MESSAGE_TYPE_REQUEST, RpcRequestMessage.class);
+        messageClasses.put(RPC_MESSAGE_TYPE_RESPONSE, RpcResponseMessage.class);
     }
+
 }
